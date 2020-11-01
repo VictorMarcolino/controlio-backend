@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  web:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command:
+      - "web"
+  worker:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command:
+      - "worker"
