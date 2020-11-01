@@ -1,0 +1,5 @@
+alembic
+Flask
+SQLAlchemy
+celery[redis]
+gunicorn
