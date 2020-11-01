@@ -12,3 +12,11 @@ services:
       context: .
     command:
       - "worker"
+  database:
+    image: postgres:13-alpine
+    ports:
+      - 15432:5432
+    environment:
+      - POSTGRES_DB=root
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
