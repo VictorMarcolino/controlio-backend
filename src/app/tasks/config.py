@@ -44,7 +44,7 @@ task_routes = ([
 beat_schedule = {
     'task-every-x-minutes': {
         'task': 'app.tasks.periodic_tasks.foo1',
-        'schedule': 1 * 1,
+        'schedule': 60 * 5,
         'options': {
             'expires': 60 * 5,
             'rate_limit': '30/m'
