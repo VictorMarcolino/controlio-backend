@@ -1,6 +1,6 @@
 FROM python:3.8-slim
-WORKDIR /usr/src/app
-ENV PYTHONPATH /usr/src/app
+WORKDIR /usr/src
+ENV PYTHONPATH /usr/src
 ENV PYTHONUNBUFFERED 1
 
 COPY requirements.txt requeriments.txt
@@ -11,4 +11,4 @@ RUN pip install -r requirements.txt
 
 #COPY FILES
 COPY src /usr/src
-ENTRYPOINT ["/usr/src/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
