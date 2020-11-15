@@ -16,6 +16,7 @@ def get_config() -> dict:
         # GERAL
 
         'web_database_url': env.get('WEB_DATABASE_URL', 'sqlite:////tmp/dev.db'),
+        'database_url': env.get('DATABASE_URL', 'sqlite:////tmp/dev.db'),
         'worker_database_url': env.get('WORKER_DATABASE_URL', 'sqlite:////tmp/dev.db'),
         'create_database': True if env.get('CREATE_DATABASE', 'false').lower() == 'true' else False,
         'workflow_timeout': get_env_typed('WORKFLOW_TIMEOUT', 10 * 60),

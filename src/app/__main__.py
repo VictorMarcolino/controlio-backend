@@ -1,4 +1,6 @@
 from flask import Flask
+
+from app.blueprints import default_api
 from app.tasks import create_celery
 from sqlalchemy import create_engine
 from app.blueprints.health import health
@@ -15,13 +17,13 @@ def create_database(config=None):
     if not config:
         config = get_config()
 
-    engine = create_engine(config['worker_database_url'], convert_unicode=True)
+    engine = create_engine(config['database_url'], convert_unicode=True)
     Base.metadata.create_all(engine)
 
 
 def bind_database():
     from flask import current_app as app
-    database_uri = app.config['web_database_url']
+    database_uri = app.config['database_url']
 
     parsed = urlparse(database_uri)
     kwargs = {}
@@ -57,6 +59,7 @@ def create_app():
 
     app.secret_key = 'secret_key'
     app.register_blueprint(health, url_prefix='/health')
+    app.register_blueprint(default_api, url_prefix='/api')
     app.debug = True
 
     sentry_url = config['SENTRY_URL']
@@ -73,3 +76,7 @@ app = create_app()
 @app.teardown_appcontext
 def cleanup(response):
     db_session.remove()
+
+
+if __name__ == '__main__':
+    app.run(port=5000, host="0.0.0.0", debug=True)
