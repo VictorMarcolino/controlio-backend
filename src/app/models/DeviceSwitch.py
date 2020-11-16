@@ -19,3 +19,7 @@ class DeviceSwitch(Device, Base):
     @classmethod
     def get_all(cls, db: Session = db_session):
         return db.query(cls).all()
+
+    @classmethod
+    def find_by_id(cls, identifier, db: Session = db_session):
+        return db.query(cls).filter(cls.identifier == identifier).first()
