@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.helper import get_config
 from app.models import DeviceSwitch
 from app.tasks import DBTask
-from app.tasks.normal_tasks import foo2
+from app.tasks.normal_tasks import foo2, check_device
 
 _configs = get_config()
 logger = log.get_task_logger(__name__)
@@ -26,3 +26,5 @@ def devices_check(self):
     db: Session = self.get_db_session()
     devices = DeviceSwitch.get_all(db=db)
     logger.info(f'check if {len(devices)} Devices are online')
+    for d in devices:
+        check_device.delay(d.identifier)
