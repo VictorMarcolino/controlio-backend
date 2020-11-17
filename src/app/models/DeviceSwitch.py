@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from sqlalchemy.orm import Session
 
 from app.models.Device import Device
@@ -16,10 +18,17 @@ class DeviceSwitch(Device, Base):
             print(e)
             db.rollback()
 
+    def reflect_changes(self, db: Session = db_session):
+        try:
+            db.commit()
+        except Exception as e:
+            print(e)
+            db.rollback()
+
     @classmethod
     def get_all(cls, db: Session = db_session):
         return db.query(cls).all()
 
     @classmethod
-    def find_by_id(cls, identifier, db: Session = db_session):
+    def find_by_id(cls, identifier, db: Session = db_session) -> DeviceSwitch:
         return db.query(cls).filter(cls.identifier == identifier).first()

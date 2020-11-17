@@ -1,9 +1,9 @@
+from flask import request
 from flask_restx import Namespace, Resource, abort
 
 from app.models import DeviceSwitch, uuid
 
 ns = Namespace('device_switch', description='...')
-
 DeviceSwitchModel = ns.model(*DeviceSwitch.get_swagger_model())
 
 
@@ -21,7 +21,16 @@ class DeviceWithId(Resource):
 
     @ns.expect(DeviceSwitchModel)
     @ns.response(200, 'asdas', model=DeviceSwitchModel)
-    def post(self):
+    @ns.marshal_with(DeviceSwitchModel)
+    def post(self, identifier):
+        result = DeviceSwitch.find_by_id(uuid.UUID(identifier))
+        if request.is_json and result:
+            device_sw = {**request.json}
+            result.is_on = device_sw["is_on"]
+            result.reflect_changes()
+            return result, 200
+        elif not result:
+            return 404
         return 400
 
 
@@ -33,7 +42,6 @@ class DeviceWithId(Resource):
         return DeviceSwitch.get_all(), 200
 
     @ns.expect(DeviceSwitchModel)
-    @ns.response(400, 'asdas', model=[DeviceSwitchModel])
     @ns.marshal_with(DeviceSwitchModel)
     def post(self):
         ds = DeviceSwitch()
