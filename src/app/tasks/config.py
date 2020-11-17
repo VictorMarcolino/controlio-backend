@@ -1,7 +1,8 @@
 import re
-
 from urllib.parse import urlparse
+
 from kombu import Queue
+
 from app.helper import get_config
 
 __config = get_config()
@@ -44,10 +45,19 @@ task_routes = ([
 beat_schedule = {
     'task-every-x-minutes': {
         'task': 'app.tasks.periodic_tasks.foo1',
+        'schedule': 5 * 60,
+        'options': {
+            'expires': 60 * 5,
+            'rate_limit': '30/m'
+        }
+    },
+    'devices_check': {
+        'task': 'app.tasks.periodic_tasks.devices_check',
         'schedule': 5,
         'options': {
             'expires': 60 * 5,
             'rate_limit': '30/m'
         }
     },
+
 }

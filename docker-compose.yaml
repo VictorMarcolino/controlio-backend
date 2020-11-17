@@ -9,8 +9,8 @@ services:
     command:
       - "web"
     environment: &environment
-      WEB_DATABASE_URL: postgresql://root:root@postgres:5432/root
-      WORKER_DATABASE_URL: postgresql://root:root@postgres:5432/root
+      DATABASE_URL: postgresql://root:root@database:5432/root
+      WORKER_DATABASE_URL: postgresql://root:root@database:5432/root
       BROKER_URL: amqp://rabbitmq:rabbitmq@rabbit:5672
     restart: always
   worker:

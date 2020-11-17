@@ -9,6 +9,7 @@ from psycopg2 import OperationalError
 from redis.exceptions import ConnectionError as RedisConnectionError
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
 
 from app.helper import get_config
 from app.models import db_session
@@ -32,7 +33,7 @@ class DBTask(Task):
             if self._db_engine is not None:
                 self._db_engine.dispose()
 
-    def get_db_session(self):
+    def get_db_session(self) -> Session:
         """
         this method return a scoped_session configured session with postgreSQL database
         :return: scoped_session
