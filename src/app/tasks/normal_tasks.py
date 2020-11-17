@@ -12,6 +12,5 @@ MAX_RETRIES = 5
 
 
 @shared_task(base=DBTask, bind=True, max_retries=MAX_RETRIES, autoretry_for=AUTORETRY_FOR)
-def foo2(self, a, b):
-    logger.info('normal task')
-    return a + b
+def foo2(self, *args, **kwargs):
+    logger.info('normal task called')
