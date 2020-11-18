@@ -32,3 +32,6 @@ class DeviceSwitch(Device, Base):
     @classmethod
     def find_by_id(cls, identifier, db: Session = db_session) -> DeviceSwitch:
         return db.query(cls).filter(cls.identifier == identifier).first()
+
+    def seek_for_active_host(self, db: Session = db_session):
+        return True

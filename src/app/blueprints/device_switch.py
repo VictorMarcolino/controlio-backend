@@ -1,6 +1,6 @@
 from flask import request
 from flask_restx import Namespace, Resource, abort
-
+from requests import get, post
 from app.models import DeviceSwitch, uuid
 
 ns = Namespace('device_switch', description='...')
@@ -23,12 +23,18 @@ class DeviceWithId(Resource):
     @ns.response(200, 'asdas', model=DeviceSwitchModel)
     @ns.marshal_with(DeviceSwitchModel)
     def post(self, identifier):
-        result = DeviceSwitch.find_by_id(uuid.UUID(identifier))
+        force_uuid = uuid.UUID(identifier)
+        result = DeviceSwitch.find_by_id(force_uuid)
         if request.is_json and result:
             device_sw = {**request.json}
             result.is_on = device_sw["is_on"]
-            result.reflect_changes()
-            return result, 200
+            Host = result.seek_for_active_host()
+            if Host:
+                response = post(url=f'{Host.host}/{force_uuid}/{int(result.is_on)}')
+                if response.ok:
+                    result.reflect_changes()
+                    return result, 200
+            return result, 404
         elif not result:
             return 404
         return 400
