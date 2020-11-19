@@ -8,7 +8,7 @@ DeviceSwitchModel = ns.model(*DeviceSwitch.get_swagger_model())
 
 
 @ns.route('/<identifier>')
-class DeviceWithId(Resource):
+class DeviceSwitchWithId(Resource):
     @ns.response(200, description='found', model=DeviceSwitchModel)
     @ns.response(404, description='not found')
     @ns.marshal_with(DeviceSwitchModel)
@@ -27,10 +27,11 @@ class DeviceWithId(Resource):
         result = DeviceSwitch.find_by_id(force_uuid)
         if request.is_json and result:
             device_sw = {**request.json}
-            result.is_on = device_sw["is_on"]
+            result.is_on = bool(device_sw["is_on"])
             Host = result.seek_for_active_host()
             if Host:
-                response = post(url=f'{Host.host}/{force_uuid}/{int(result.is_on)}')
+                response = get(url=f'http://{Host.url}/{force_uuid}/{int(result.is_on)}')
+                print(response.ok)
                 if response.ok:
                     result.reflect_changes()
                     return result, 200
@@ -41,7 +42,7 @@ class DeviceWithId(Resource):
 
 
 @ns.route('/')
-class DeviceWithId(Resource):
+class DeviceSwitchRol(Resource):
 
     @ns.marshal_with(DeviceSwitchModel, as_list=True)
     def get(self):

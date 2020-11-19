@@ -1,14 +1,17 @@
 from __future__ import annotations
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, relationship
 
 from app.models.Device import Device
+from app.models.Hosts import ds_host_relation
 from app.models.base import Base, db_session
 
 
 class DeviceSwitch(Device, Base):
     __tablename__ = 'device_switch'
     __swagger_doc_format__ = {**Device.__swagger_doc_format__}
+    hosts = relationship("Host", secondary=ds_host_relation,
+                         back_populates="device_switch")
 
     def add(self, db: Session = db_session):
         try:
@@ -34,4 +37,4 @@ class DeviceSwitch(Device, Base):
         return db.query(cls).filter(cls.identifier == identifier).first()
 
     def seek_for_active_host(self, db: Session = db_session):
-        return True
+        return self.hosts[0]

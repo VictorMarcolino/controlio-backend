@@ -16,6 +16,7 @@ class Device(CreatedAtMixin, UpdatedAtMixin):
     }
     identifier = Column(UUIDType(binary=False), default=uuid.uuid4, primary_key=True)
     is_on = Column(Boolean(), nullable=False, default=False)
+    hosts = ...
 
     @classmethod
     def get_swagger_model(cls):

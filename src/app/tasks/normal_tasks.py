@@ -1,8 +1,12 @@
+import datetime
+
 from celery import shared_task
 from celery.utils import log
+from requests import get
+from sqlalchemy.orm import Session
 
 from app.helper import get_config
-from app.models import DeviceSwitch
+from app.models import DeviceSwitch, Host
 from app.tasks import DBTask, AUTORETRY_FOR
 
 _config = get_config()
@@ -17,8 +21,10 @@ def foo2(self, *args, **kwargs):
 
 
 @shared_task(base=DBTask, bind=True, max_retries=MAX_RETRIES, autoretry_for=AUTORETRY_FOR)
-def check_device(self, identifier):
-    logger.info(f'checking device {identifier}')
-    result = DeviceSwitch.find_by_id(identifier, db=self.get_db_session())
-    if result:
-        logger.info(f'device {identifier} found')
+def check_host(self, url):
+    db: Session = self.get_db_session()
+    logger.info(f'checking device {url}')
+    host = Host.query_by_url(url, db=db)
+    if host:
+        logger.info(f'host {url} found')
+        host.check_online(db=db)
