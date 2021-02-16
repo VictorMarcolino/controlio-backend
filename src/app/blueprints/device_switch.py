@@ -1,6 +1,7 @@
 from flask import request
 from flask_restx import Namespace, Resource, abort
-from requests import get, post
+from requests import get
+
 from app.models import DeviceSwitch, uuid
 
 ns = Namespace('device_switch', description='...')
@@ -51,6 +52,13 @@ class DeviceSwitchRol(Resource):
     @ns.expect(DeviceSwitchModel)
     @ns.marshal_with(DeviceSwitchModel)
     def post(self):
-        ds = DeviceSwitch()
-        ds.add()
-        return ds, 202
+        if request.is_json:
+            device_sw = {**request.json}
+            name = device_sw.get('name', False)
+            kwargs = dict()
+            if name:
+                kwargs['name'] = name
+            ds = DeviceSwitch(**kwargs)
+            ds.add()
+            return ds, 202
+        return 400

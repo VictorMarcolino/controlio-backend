@@ -11,3 +11,5 @@ kombu~=5.0.2
 sentry_sdk
 redis~=3.5.3
 flask_restx
+
+transaction~=3.0.1

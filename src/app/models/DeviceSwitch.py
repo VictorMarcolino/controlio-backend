@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session, relationship
 
-from app.models.Device import Device
-from app.models.Hosts import ds_host_relation
-from app.models.base import Base, db_session
+from src.app.models.Device import Device
+from src.app.models.Hosts import ds_host_relation
+from src.app.models.base import Base, db_session
 
 
 class DeviceSwitch(Device, Base):
@@ -37,4 +37,6 @@ class DeviceSwitch(Device, Base):
         return db.query(cls).filter(cls.identifier == identifier).first()
 
     def seek_for_active_host(self, db: Session = db_session):
-        return self.hosts[0]
+        if self.hosts:
+            return self.hosts[0]
+        return None

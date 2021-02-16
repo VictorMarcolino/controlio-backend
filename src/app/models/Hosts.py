@@ -9,8 +9,8 @@ from sqlalchemy.orm import Session, relationship
 from sqlalchemy_utils import UUIDType
 from urllib3.exceptions import NewConnectionError
 
-from app.models.base import Base, db_session
-from app.models.mixins import CreatedAtMixin, UpdatedAtMixin
+from src.app.models.base import Base, db_session
+from src.app.models.mixins import CreatedAtMixin, UpdatedAtMixin
 
 ds_host_relation = Table('ds_host_relation', Base.metadata,
                          Column('host', String(),
