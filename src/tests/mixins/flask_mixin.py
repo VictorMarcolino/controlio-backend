@@ -1,6 +1,6 @@
 from flask import Flask
 
-from app.blueprints import default_api
+from src.app.blueprints import default_api
 
 
 class FlaskMixin(object):

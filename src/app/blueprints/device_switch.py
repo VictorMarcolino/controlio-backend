@@ -2,7 +2,7 @@ from flask import request
 from flask_restx import Namespace, Resource, abort
 from requests import get
 
-from app.models import DeviceSwitch, uuid
+from src.app.models import DeviceSwitch, uuid
 
 ns = Namespace('device_switch', description='...')
 DeviceSwitchModel = ns.model(*DeviceSwitch.get_swagger_model())

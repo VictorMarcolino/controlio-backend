@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from tests.mixins.database import DatabaseMixin
-from tests.mixins.flask_mixin import FlaskMixin
-from tests.specs.api_spec import ApiSpec
+from src.tests.mixins.database import DatabaseMixin
+from src.tests.mixins.flask_mixin import FlaskMixin
+from src.tests.specs.api_spec import ApiSpec
 
 
 class ApiTest(DatabaseMixin, FlaskMixin, ApiSpec, TestCase):
@@ -20,6 +20,9 @@ class ApiTest(DatabaseMixin, FlaskMixin, ApiSpec, TestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         cls.database_tear_down_class()
+
+    # def assert_tenant_on_database(self, uuid):
+    #     self.db_session.query(Tenant).filter(Tenant.uuid == uuid).one()
 
     def test_001_return_empty_result_when_ask_for_list_of_devices_with_with_none_registered(self):
         self.when_client_calls_get('/api/device_switch/')

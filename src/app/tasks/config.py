@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 
 from kombu import Queue
 
-from app.helper import get_config
+from src.app.helper import get_config
 
 __config = get_config()
 

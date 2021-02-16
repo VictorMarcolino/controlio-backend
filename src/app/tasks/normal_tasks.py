@@ -5,9 +5,9 @@ from celery.utils import log
 from requests import get
 from sqlalchemy.orm import Session
 
-from app.helper import get_config
-from app.models import DeviceSwitch, Host
-from app.tasks import DBTask, AUTORETRY_FOR
+from src.app.helper import get_config
+from src.app.models import DeviceSwitch, Host
+from src.app.tasks import DBTask, AUTORETRY_FOR
 
 _config = get_config()
 logger = log.get_task_logger(__name__)

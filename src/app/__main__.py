@@ -1,12 +1,12 @@
 from flask import Flask
 
-from app.blueprints import default_api
-from app.tasks import create_celery
+from src.app.blueprints import default_api
+from src.app.tasks import create_celery
 from sqlalchemy import create_engine
-from app.blueprints.health import health
+from src.app.blueprints.health import health
 
-from app.models import Base, db_session
-from app.helper import get_config
+from src.app.models import Base, db_session
+from src.app.helper import get_config
 from urllib.parse import urlparse, parse_qs
 import os
 import logging
