@@ -38,9 +38,34 @@ class DeviceSwitchWithId(Resource):
                     return result, 200
             return result, 404
         elif not result:
+            return {}, 404
+        return {}, 400
+
+    def delete(self, identifier):
+        force_uuid = uuid.UUID(identifier)
+        result = DeviceSwitch.find_by_id(force_uuid)
+        if result:
+            result.delete()
+        else:
             return 404
         return 400
 
+    @ns.expect(DeviceSwitchModel)
+    @ns.response(200, 'asdas', model=DeviceSwitchModel)
+    @ns.marshal_with(DeviceSwitchModel, code=200)
+    def put(self, identifier):
+        force_uuid = uuid.UUID(identifier)
+        result = DeviceSwitch.find_by_id(force_uuid)
+        if request.is_json and result:
+            payload_input = {**request.json}
+            if not payload_input.get("name"):
+                return {}, 400
+            result.name = payload_input.get("name")
+            result.reflect_changes()
+            return result, 200
+        elif not result:
+            return {}, 404
+        return {}, 400
 
 @ns.route('/')
 class DeviceSwitchRol(Resource):
@@ -60,5 +85,5 @@ class DeviceSwitchRol(Resource):
                 kwargs['name'] = name
             ds = DeviceSwitch(**kwargs)
             ds.add()
-            return ds, 202
+            return ds, 201
         return 400

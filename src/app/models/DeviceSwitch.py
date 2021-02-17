@@ -36,6 +36,10 @@ class DeviceSwitch(Device, Base):
     def find_by_id(cls, identifier, db: Session = db_session) -> DeviceSwitch:
         return db.query(cls).filter(cls.identifier == identifier).first()
 
+    def delete(self, db: Session = db_session):
+        db.delete(self)
+        db.commit()
+
     def seek_for_active_host(self, db: Session = db_session):
         if self.hosts:
             return self.hosts[0]

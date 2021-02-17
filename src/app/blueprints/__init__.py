@@ -15,3 +15,8 @@ default_api_def = Api(default_api,
 
 default_api_def.add_namespace(device_switch_ns)
 default_api_def.add_namespace(reception_ns)
+
+
+@default_api_def.errorhandler(ValueError)
+def handle_value_error(e):
+    return {}, 400

@@ -24,8 +24,20 @@ class FlaskMixin(object):
         self.response = self.client.delete(path)
         return self.response.json
 
-    def when_client_calls_put(self, path, body):
-        self.response = self.client.put(path, json=body)
+    def assert_200_ok(self):
+        self.assertEqual(self.response.status_code, 200)
+
+    def assert_400_bad_request(self):
+        self.assertEqual(self.response.status_code, 400)
+
+    def assert_404_not_found(self):
+        self.assertEqual(self.response.status_code, 404)
+
+    def assert_201_created(self):
+        self.assertEqual(self.response.status_code, 201)
+
+    def when_client_calls_put(self, path, json_body):
+        self.response = self.client.put(path, json=json_body)
         return self.response.json
 
     def assert_response_content(self, json_body):
@@ -47,6 +59,8 @@ class FlaskMixin(object):
 
     def when_client_calls_get(self, path):
         self.response = self.client.get(path)
+        return self.response.json
 
     def when_client_calls_post(self, path, json_body):
         self.response = self.client.post(path, json=json_body)
+        return self.response.json
