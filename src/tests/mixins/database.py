@@ -4,7 +4,7 @@ import transaction
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from src.app.models.base import db_session, Base
+from app.models.base import db_session, Base
 
 here = abspath(dirname(__file__))
 

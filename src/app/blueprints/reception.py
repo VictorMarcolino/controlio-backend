@@ -1,7 +1,7 @@
 from flask import request
 from flask_restx import Namespace, Resource
 
-from src.app.models import Host, DeviceSwitch
+from app.models import Host, DeviceSwitch
 
 ns = Namespace('reception', description='...')
 

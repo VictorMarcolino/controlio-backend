@@ -4,7 +4,7 @@ from flask_restx import fields
 from sqlalchemy import Column, Boolean, String
 from sqlalchemy_utils import UUIDType
 
-from src.app.models.mixins import CreatedAtMixin, UpdatedAtMixin
+from app.models.mixins import CreatedAtMixin, UpdatedAtMixin
 
 
 class Device(CreatedAtMixin, UpdatedAtMixin):

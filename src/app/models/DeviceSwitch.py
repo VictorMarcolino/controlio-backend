@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session, relationship
 
-from src.app.models.Device import Device
-from src.app.models.Hosts import ds_host_relation
-from src.app.models.base import Base, db_session
+from app.models.Device import Device
+from app.models.Hosts import ds_host_relation
+from app.models.base import Base, db_session
 
 
 class DeviceSwitch(Device, Base):

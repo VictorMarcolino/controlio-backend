@@ -6,10 +6,10 @@ from celery import shared_task
 from celery.utils import log
 from sqlalchemy.orm import Session
 
-from src.app.helper import get_config
-from src.app.models import DeviceSwitch, Host
-from src.app.tasks import DBTask
-from src.app.tasks.normal_tasks import foo2, check_host
+from app.helper import get_config
+from app.models import DeviceSwitch, Host
+from app.tasks import DBTask
+from app.tasks.normal_tasks import foo2, check_host
 
 _configs = get_config()
 logger = log.get_task_logger(__name__)

@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from src.tests.mixins.database import DatabaseMixin
-from src.tests.mixins.flask_mixin import FlaskMixin
-from src.tests.specs.api_spec import ApiSpec
+from tests.mixins.database import DatabaseMixin
+from tests.mixins.flask_mixin import FlaskMixin
+from tests.specs.api_spec import ApiSpec
 
 
 class ApiTest(DatabaseMixin, FlaskMixin, ApiSpec, TestCase):

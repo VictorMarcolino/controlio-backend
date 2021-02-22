@@ -2,7 +2,7 @@ import os
 import requests
 from flask import Blueprint, jsonify
 
-from src.app.tasks.normal_tasks import foo2
+from app.tasks.normal_tasks import foo2
 
 health = Blueprint('health', __name__)
 

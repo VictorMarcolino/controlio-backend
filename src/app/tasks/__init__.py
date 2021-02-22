@@ -11,8 +11,8 @@ from requests.exceptions import ConnectionError as RequestsConnectionError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from src.app.helper import get_config
-from src.app.models import db_session
+from app.helper import get_config
+from app.models import db_session
 
 AUTORETRY_FOR = (RemoteDisconnected,
                  RequestsConnectionError,
