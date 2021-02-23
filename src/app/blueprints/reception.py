@@ -29,7 +29,7 @@ class DeviceWithId(Resource):
 
                 _host = Host(url=microcontroller["host"])
                 _host.is_online = True
-                for d in microcontroller["devices"]:
+                for d in microcontroller["actuators"]:
                     ds = DeviceSwitch.find_by_id(d["identifier"])
                     if ds:
                         ds.is_on = bool(d["isOn"])

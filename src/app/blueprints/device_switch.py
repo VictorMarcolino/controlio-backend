@@ -28,12 +28,13 @@ class DeviceSwitchWithId(Resource):
         result = DeviceSwitch.find_by_id(force_uuid)
         if request.is_json and result:
             device_sw = {**request.json}
-            result.is_on = bool(device_sw["is_on"])
             Host = result.seek_for_active_host()
             if Host:
-                response = get(url=f'http://{Host.url}/{force_uuid}/{int(result.is_on)}')
-                print(response.ok)
+                if result.is_on == bool(device_sw["is_on"]):
+                    return result, 200
+                response = get(url=f'http://{Host.url}/2/{force_uuid}')
                 if response.ok:
+                    result.is_on = not result.is_on
                     result.reflect_changes()
                     return result, 200
             return result, 404

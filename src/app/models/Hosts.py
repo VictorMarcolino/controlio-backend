@@ -29,9 +29,12 @@ class Host(CreatedAtMixin, UpdatedAtMixin, Base):
                                  back_populates="hosts")
 
     def check_online(self, db: Session = db_session):
+
         try:
-            response = get(url=f'http://{self.url}')
-            if response.status_code == 404:
+            response = get(url=f'http://{self.url}/0')
+            print(response.status_code)
+            print(f'http://{self.url}/0')
+            if response.status_code == 200:
                 self.last_time_was_saw_online = datetime.utcnow()
                 self.is_online = True
                 db.commit()
@@ -40,7 +43,7 @@ class Host(CreatedAtMixin, UpdatedAtMixin, Base):
             pass
         self.is_online = False
         db.commit()
-        time_delta = (datetime.utcnow()- self.last_time_was_saw_online )
+        time_delta = (datetime.utcnow() - self.last_time_was_saw_online )
         total_seconds = time_delta.total_seconds()
         minutes = total_seconds / 60
         print(minutes)

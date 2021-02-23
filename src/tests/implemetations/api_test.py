@@ -51,7 +51,7 @@ class ApiTest(DatabaseMixin, FlaskMixin, ApiSpec, TestCase):
         self.assert_200_ok()
         result = self.when_client_calls_get('/api/device_switch/')
         self.assert_200_ok()
-        self.assertEqual(len(result), 0)
+        self.assert_size_of_json_response(0)
 
     def test_004_update_device(self):
         self.when_client_calls_post('/api/device_switch/', json_body={
