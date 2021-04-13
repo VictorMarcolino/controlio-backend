@@ -18,6 +18,7 @@ class Device(CreatedAtMixin, UpdatedAtMixin):
     identifier = Column(UUIDType(binary=False), default=uuid.uuid4, primary_key=True)
     is_on = Column(Boolean(), nullable=False, default=False)
     name = Column(String(), nullable=True, default='No name Provided')
+    pin = Column(String(), nullable=False, default='INSERT_PIN_HERE', server_default='INSERT_PIN_HERE')
     hosts = ...
 
     @classmethod

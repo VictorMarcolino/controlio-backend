@@ -1,5 +1,5 @@
 from flask import request
-from flask_restx import Namespace, Resource
+from flask_restx import Namespace, Resource, abort
 
 from app.models import Host, DeviceSwitch
 
@@ -23,6 +23,7 @@ class DeviceWithId(Resource):
         try:
             if request.is_json:
                 microcontroller = {**request.json}
+                print(microcontroller)
                 h = Host.query_by_url(microcontroller["host"])
                 if h:
                     h.delete()
@@ -32,13 +33,14 @@ class DeviceWithId(Resource):
                 for d in microcontroller["actuators"]:
                     ds = DeviceSwitch.find_by_id(d["identifier"])
                     if ds:
-                        ds.is_on = bool(d["isOn"])
+                        ds.is_on = bool(d["state"])
                         _host.device_switch.append(ds)
                     else:
-                        return 404
+                        abort(404)
                 _host.add()
-                return 200
-            return 400
+                print(microcontroller)
+                return 200, {}
+            abort(400)
         except Exception as e:
             print(e)
-            return 500
+            abort(500)

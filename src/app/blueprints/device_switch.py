@@ -1,8 +1,13 @@
-from flask import request
-from flask_restx import Namespace, Resource, abort
+from flask import request, Response
+from flask_restx import Namespace, Resource, abort, reqparse
 from requests import get
 
 from app.models import DeviceSwitch, uuid
+from app.support import generators
+
+parser = reqparse.RequestParser()
+parser.add_argument('kind_of_code', required=True, location='json')
+parser.add_argument('devices_uuids', type=list, required=True, location='json')
 
 ns = Namespace('device_switch', description='...')
 DeviceSwitchModel = ns.model(*DeviceSwitch.get_swagger_model())
@@ -68,6 +73,7 @@ class DeviceSwitchWithId(Resource):
             return {}, 404
         return {}, 400
 
+
 @ns.route('/')
 class DeviceSwitchRol(Resource):
 
@@ -88,3 +94,25 @@ class DeviceSwitchRol(Resource):
             ds.add()
             return ds, 201
         return 400
+
+
+@ns.route('/code-generate')
+class GenerateCode(Resource):
+    @ns.expect(parser)
+    def post(self):
+        args = parser.parse_args()
+        devices_uuids = args.get('devices_uuids')
+        kind_of_code = args.get('kind_of_code')
+        if kind_of_code in generators:
+            print(devices_uuids)
+            listOfDevices = DeviceSwitch.find_all_by_id(devices_uuids)
+            if listOfDevices:
+                gen = generators.get(kind_of_code)
+                generator = gen(listOfDevices)
+                return Response(
+                    generator.generate_file_string(),
+                    mimetype="text/plain",
+                    headers={"Content-disposition":
+                                 f"attachment; filename={kind_of_code}.txt"})
+                # return {**args, "code": generator.generate_file_string()}, 200
+        abort(400)

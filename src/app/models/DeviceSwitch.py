@@ -36,6 +36,10 @@ class DeviceSwitch(Device, Base):
     def find_by_id(cls, identifier, db: Session = db_session) -> DeviceSwitch:
         return db.query(cls).filter(cls.identifier == identifier).first()
 
+    @classmethod
+    def find_all_by_id(cls, identifier, db: Session = db_session) :
+        return db.query(cls).filter(cls.identifier.in_(identifier) ).all()
+
     def delete(self, db: Session = db_session):
         db.delete(self)
         db.commit()
