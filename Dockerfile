@@ -3,8 +3,9 @@ WORKDIR /usr/src
 ENV PYTHONPATH /usr/src
 ENV PYTHONUNBUFFERED 1
 
-COPY requirements.txt requeriments.txt
-RUN pip install -r requeriments.txt
+RUN apt-get update -y && \
+apt-get upgrade -y && \
+apt-get install libpq-dev python-dev -y
 # Install DEPS
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
