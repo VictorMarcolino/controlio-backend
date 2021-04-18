@@ -1,5 +1,7 @@
+import json
+
 from flask import request, Response
-from flask_restx import Namespace, Resource, abort, reqparse
+from flask_restx import Namespace, Resource, abort, reqparse, inputs
 from requests import get
 
 from app.models import DeviceSwitch, uuid
@@ -8,6 +10,7 @@ from app.support import generators
 parser = reqparse.RequestParser()
 parser.add_argument('kind_of_code', required=True, location='json')
 parser.add_argument('devices_uuids', type=list, required=True, location='json')
+parser.add_argument('download',default=False, type=inputs.boolean, required=True, location='args')
 
 ns = Namespace('device_switch', description='...')
 DeviceSwitchModel = ns.model(*DeviceSwitch.get_swagger_model())
@@ -87,9 +90,11 @@ class DeviceSwitchRol(Resource):
         if request.is_json:
             device_sw = {**request.json}
             name = device_sw.get('name', False)
+            pin = device_sw.get('pin', False)
             kwargs = dict()
             if name:
                 kwargs['name'] = name
+                kwargs['pin'] = pin
             ds = DeviceSwitch(**kwargs)
             ds.add()
             return ds, 201
@@ -103,16 +108,19 @@ class GenerateCode(Resource):
         args = parser.parse_args()
         devices_uuids = args.get('devices_uuids')
         kind_of_code = args.get('kind_of_code')
+        download = args.get('download')
+        print(json.dumps(args, indent=4, sort_keys=True))
+
         if kind_of_code in generators:
-            print(devices_uuids)
             listOfDevices = DeviceSwitch.find_all_by_id(devices_uuids)
             if listOfDevices:
                 gen = generators.get(kind_of_code)
                 generator = gen(listOfDevices)
-                return Response(
-                    generator.generate_file_string(),
-                    mimetype="text/plain",
-                    headers={"Content-disposition":
-                                 f"attachment; filename={kind_of_code}.txt"})
-                # return {**args, "code": generator.generate_file_string()}, 200
+                if download:
+                    return Response(
+                        generator.generate_file_string(),
+                        mimetype="text/plain",
+                        headers={"Content-disposition":
+                                     f"attachment; filename={kind_of_code}.txt"})
+                return {**args, "code": generator.generate_file_string()}, 200
         abort(400)
