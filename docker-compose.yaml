@@ -1,0 +1,55 @@
+version: "3.8"
+services:
+  web:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - 5000:5000
+    command:
+      - "web"
+    environment: &environment
+      DATABASE_URL: postgresql://root:root@database:5432/root
+      WORKER_DATABASE_URL: postgresql://root:root@database:5432/root
+      BROKER_URL: amqp://rabbitmq:rabbitmq@rabbit:5672
+    restart: always
+    volumes:
+      - ./src/app:/usr/src/app
+  worker:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command:
+      - "worker"
+    environment:
+      <<: *environment
+    restart: always
+  beat:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command:
+      - "beat"
+    environment:
+      <<: *environment
+    restart: always
+  database:
+    image: postgres:13-alpine
+    ports:
+      - 15432:5432
+    environment:
+      - POSTGRES_DB=root
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+  rabbit:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "ERLANGCOOKIE"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    labels:
+      NAME: "rabbitmq"
