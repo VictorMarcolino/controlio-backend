@@ -64,9 +64,6 @@ def create_celery():
         'app.tasks.periodic_tasks',
     ])
 
-    sentry_url = app_config['SENTRY_URL']
-    if sentry_url:
-        sentry_sdk.init(sentry_url)
-    after_setup_logger.connect(setup_loggers)
+    # after_setup_logger.connect(setup_loggers)
 
     return app

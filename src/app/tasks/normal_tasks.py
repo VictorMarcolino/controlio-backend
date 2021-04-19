@@ -6,7 +6,7 @@ from requests import get
 from sqlalchemy.orm import Session
 
 from app.helper import get_config
-from app.models import DeviceSwitch, Host
+from app.models import Host
 from app.tasks import DBTask, AUTORETRY_FOR
 
 _config = get_config()

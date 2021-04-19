@@ -7,7 +7,7 @@ from celery.utils import log
 from sqlalchemy.orm import Session
 
 from app.helper import get_config
-from app.models import DeviceSwitch, Host
+from app.models import Host
 from app.tasks import DBTask
 from app.tasks.normal_tasks import check_host
 
