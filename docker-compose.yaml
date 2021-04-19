@@ -41,8 +41,6 @@ services:
       - POSTGRES_DB=root
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-    volumes:
-      - ./postgres/data:/var/lib/postgresql/data
   rabbit:
     image: rabbitmq:3-management
     environment:
