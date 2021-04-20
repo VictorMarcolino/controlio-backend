@@ -33,7 +33,7 @@ WiFiServer server(80);
 """
 
 STRING_2 = """
-ControlioBoaderController genericBoard = ControlioBoaderController(devices);
+ControlioBoaderController genericBoard = ControlioBoaderController(actuators);
 void setup()
 {
   WiFi.mode(WIFI_STA);
@@ -75,8 +75,8 @@ void loop()
 
 class Esp8266Generator(FileGenerator):
     def generate_file_string(self):
-        atuadores = 'list<Actuator *> devices = { '
-        for i in self.listOfDevices:
+        atuadores = 'list<Actuator *> actuators = { '
+        for i in self.listOfActuators:
             atuadores += f'new ActuatorForEsp8266({i["pin"]}, "{i["identifier"]}", "{i["name"]}"),'
         atuadores += "};"
         print(atuadores)

@@ -31,8 +31,8 @@ def upgrade():
     op.create_index(op.f('ix_hosts_updated_at'), 'hosts', ['updated_at'], unique=False)
     op.create_table('ds_host_relation',
                     sa.Column('host', sa.String(), nullable=True),
-                    sa.Column('device', sqlalchemy_utils.types.uuid.UUIDType(), nullable=True),
-                    sa.ForeignKeyConstraint(['device'], ['device_switch.identifier'], ondelete='CASCADE'),
+                    sa.Column('actuator', sqlalchemy_utils.types.uuid.UUIDType(), nullable=True),
+                    sa.ForeignKeyConstraint(['actuator'], ['actuator_binary.identifier'], ondelete='CASCADE'),
                     sa.ForeignKeyConstraint(['host'], ['hosts.url'], ondelete='CASCADE')
                     )
     # ### end Alembic commands ###

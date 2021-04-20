@@ -3,30 +3,23 @@ from __future__ import annotations
 from datetime import datetime
 
 from requests import get
-from sqlalchemy import Boolean, String, Table, ForeignKey
-from sqlalchemy import Column, DateTime
+from sqlalchemy import Boolean, String, Table, ForeignKey, Column, DateTime
 from sqlalchemy.orm import Session, relationship
 from sqlalchemy_utils import UUIDType
-from urllib3.exceptions import NewConnectionError
 
+from app.models.ExtraTables import relation_between_microcontrollers_and_actuators
 from app.models.base import Base, db_session
 from app.models.mixins import CreatedAtMixin, UpdatedAtMixin
 
-ds_host_relation = Table('ds_host_relation', Base.metadata,
-                         Column('host', String(),
-                                ForeignKey(f'hosts.url', ondelete="CASCADE", )),
-                         Column('device', UUIDType(),
-                                ForeignKey(f'device_switch.identifier', ondelete="CASCADE"))
-                         )
 
 
-class Host(CreatedAtMixin, UpdatedAtMixin, Base):
+
+class Microcontroller(CreatedAtMixin, UpdatedAtMixin, Base):
     __tablename__ = 'hosts'
     url = Column(String(), primary_key=True)
     is_online = Column(Boolean(), nullable=False, default=False)
     last_time_was_saw_online = Column(DateTime, default=datetime.utcnow, index=True)
-    device_switch = relationship("DeviceSwitch", secondary=ds_host_relation,
-                                 back_populates="hosts")
+    actuator_binary = relationship("ActuatorBinary", secondary=relation_between_microcontrollers_and_actuators)
 
     def check_online(self, db: Session = db_session):
 
@@ -43,7 +36,7 @@ class Host(CreatedAtMixin, UpdatedAtMixin, Base):
             pass
         self.is_online = False
         db.commit()
-        time_delta = (datetime.utcnow() - self.last_time_was_saw_online )
+        time_delta = (datetime.utcnow() - self.last_time_was_saw_online)
         total_seconds = time_delta.total_seconds()
         minutes = total_seconds / 60
         print(minutes)
@@ -59,7 +52,7 @@ class Host(CreatedAtMixin, UpdatedAtMixin, Base):
             raise e
 
     @classmethod
-    def query_by_url(cls, url, db: Session = db_session) -> Host:
+    def query_by_url(cls, url, db: Session = db_session) -> Microcontroller:
         return db.query(cls).filter(cls.url == url).first()
 
     def delete(self, db: Session = db_session):

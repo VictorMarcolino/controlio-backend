@@ -4,45 +4,45 @@ from flask import request, Response
 from flask_restx import Namespace, Resource, abort, reqparse, inputs
 from requests import get
 
-from app.models import DeviceSwitch, uuid
+from app.models import ActuatorBinary, uuid
 from app.support import generators
 
 parser = reqparse.RequestParser()
 parser.add_argument('kind_of_code', required=True, location='json')
-parser.add_argument('devices_uuids', type=list, required=True, location='json')
+parser.add_argument('actuator_uuids', type=list, required=True, location='json')
 parser.add_argument('download',default=False, type=inputs.boolean, required=True, location='args')
 
-ns = Namespace('device_switch', description='...')
-DeviceSwitchModel = ns.model(*DeviceSwitch.get_swagger_model())
+ns = Namespace('actuator_binary', description='...')
+ActuatorBinaryModel = ns.model(*ActuatorBinary.get_swagger_model())
 
 
 @ns.route('/<identifier>')
-class DeviceSwitchWithId(Resource):
-    @ns.response(200, description='found', model=DeviceSwitchModel)
+class ActuatorBinaryWithId(Resource):
+    @ns.response(200, description='found', model=ActuatorBinaryModel)
     @ns.response(404, description='not found')
-    @ns.marshal_with(DeviceSwitchModel)
+    @ns.marshal_with(ActuatorBinaryModel)
     def get(self, identifier):
         try:
-            result = DeviceSwitch.find_by_id(uuid.UUID(identifier))
+            result = ActuatorBinary.find_by_id(uuid.UUID(identifier))
             return result, 200 if result else 404
         except ValueError:
             abort(400, 'badly formed hexadecimal UUID string')
 
-    @ns.expect(DeviceSwitchModel)
-    @ns.response(200, 'asdas', model=DeviceSwitchModel)
-    @ns.marshal_with(DeviceSwitchModel)
+    @ns.expect(ActuatorBinaryModel)
+    @ns.response(200, 'asdas', model=ActuatorBinaryModel)
+    @ns.marshal_with(ActuatorBinaryModel)
     def post(self, identifier):
         force_uuid = uuid.UUID(identifier)
-        result = DeviceSwitch.find_by_id(force_uuid)
+        result = ActuatorBinary.find_by_id(force_uuid)
         if request.is_json and result:
-            device_sw = {**request.json}
+            actuator_binary = {**request.json}
             Host = result.seek_for_active_host()
             if Host:
-                if result.is_on == bool(device_sw["is_on"]):
+                if result.state == bool(actuator_binary["state"]):
                     return result, 200
                 response = get(url=f'http://{Host.url}/2/{force_uuid}')
                 if response.ok:
-                    result.is_on = not result.is_on
+                    result.state = not result.state
                     result.reflect_changes()
                     return result, 200
             return result, 404
@@ -52,19 +52,19 @@ class DeviceSwitchWithId(Resource):
 
     def delete(self, identifier):
         force_uuid = uuid.UUID(identifier)
-        result = DeviceSwitch.find_by_id(force_uuid)
+        result = ActuatorBinary.find_by_id(force_uuid)
         if result:
             result.delete()
         else:
             return 404
         return 400
 
-    @ns.expect(DeviceSwitchModel)
-    @ns.response(200, 'asdas', model=DeviceSwitchModel)
-    @ns.marshal_with(DeviceSwitchModel, code=200)
+    @ns.expect(ActuatorBinaryModel)
+    @ns.response(200, 'asdas', model=ActuatorBinaryModel)
+    @ns.marshal_with(ActuatorBinaryModel, code=200)
     def put(self, identifier):
         force_uuid = uuid.UUID(identifier)
-        result = DeviceSwitch.find_by_id(force_uuid)
+        result = ActuatorBinary.find_by_id(force_uuid)
         if request.is_json and result:
             payload_input = {**request.json}
             if not payload_input.get("name"):
@@ -78,24 +78,24 @@ class DeviceSwitchWithId(Resource):
 
 
 @ns.route('/')
-class DeviceSwitchRol(Resource):
+class ActuatorBinaryRol(Resource):
 
-    @ns.marshal_with(DeviceSwitchModel, as_list=True)
+    @ns.marshal_with(ActuatorBinaryModel, as_list=True)
     def get(self):
-        return DeviceSwitch.get_all(), 200
+        return ActuatorBinary.get_all(), 200
 
-    @ns.expect(DeviceSwitchModel)
-    @ns.marshal_with(DeviceSwitchModel)
+    @ns.expect(ActuatorBinaryModel)
+    @ns.marshal_with(ActuatorBinaryModel)
     def post(self):
         if request.is_json:
-            device_sw = {**request.json}
-            name = device_sw.get('name', False)
-            pin = device_sw.get('pin', False)
+            actuator_binary = {**request.json}
+            name = actuator_binary.get('name', False)
+            pin = actuator_binary.get('pin', False)
             kwargs = dict()
             if name:
                 kwargs['name'] = name
                 kwargs['pin'] = pin
-            ds = DeviceSwitch(**kwargs)
+            ds = ActuatorBinary(**kwargs)
             ds.add()
             return ds, 201
         return 400
@@ -106,16 +106,16 @@ class GenerateCode(Resource):
     @ns.expect(parser)
     def post(self):
         args = parser.parse_args()
-        devices_uuids = args.get('devices_uuids')
+        actuator_uuids = args.get('actuator_uuids')
         kind_of_code = args.get('kind_of_code')
         download = args.get('download')
         print(json.dumps(args, indent=4, sort_keys=True))
 
         if kind_of_code in generators:
-            listOfDevices = DeviceSwitch.find_all_by_id(devices_uuids)
-            if listOfDevices:
+            listOfActuators = ActuatorBinary.find_all_by_id(actuator_uuids)
+            if listOfActuators:
                 gen = generators.get(kind_of_code)
-                generator = gen(listOfDevices)
+                generator = gen(listOfActuators)
                 if download:
                     return Response(
                         generator.generate_file_string(),
@@ -123,4 +123,4 @@ class GenerateCode(Resource):
                         headers={"Content-disposition":
                                      f"attachment; filename={kind_of_code}.txt"})
                 return {**args, "code": generator.generate_file_string()}, 200
-        abort(400)
+        abort(401)

@@ -43,8 +43,8 @@ task_routes = ([
                ],)
 
 beat_schedule = {
-    'devices_check': {
-        'task': 'app.tasks.periodic_tasks.devices_check',
+    'actuators_check': {
+        'task': 'app.tasks.periodic_tasks.actuators_check',
         'schedule': 5,
         'options': {
             'expires': 60 * 5,

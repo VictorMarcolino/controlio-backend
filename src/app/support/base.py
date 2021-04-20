@@ -1,18 +1,18 @@
 from typing import List
 
-from app.models import Device
+from app.models import Actuator
 
 
 class FileGenerator:
-    listOfDevices = ...
+    listOfActuators = ...
 
-    def __init__(self, listOfDevices: List[Device]):
-        self.listOfDevices = [{
-            "pin": device.pin,
-            "identifier": device.identifier,
-            "name": device.name,
-        } for device in listOfDevices]
-        print(self.listOfDevices)
+    def __init__(self, listOfActuators: List[Actuator]):
+        self.listOfActuators = [{
+            "pin": actuator.pin,
+            "identifier": actuator.identifier,
+            "name": actuator.name,
+        } for actuator in listOfActuators]
+        print(self.listOfActuators)
 
     def generate_file_string(self) -> str:
         raise NotImplementedError()

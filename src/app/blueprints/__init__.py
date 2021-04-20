@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restx import Api
 
-from .device_switch import ns as device_switch_ns
+from .actuator_binary import ns as actuator_binary_ns
 from .reception import ns as reception_ns
 
 default_api = Blueprint('api', __name__)
@@ -11,7 +11,7 @@ default_api_def = Api(default_api,
                       description='A description',
                       )
 
-default_api_def.add_namespace(device_switch_ns)
+default_api_def.add_namespace(actuator_binary_ns)
 default_api_def.add_namespace(reception_ns)
 
 

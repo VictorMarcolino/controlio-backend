@@ -2,16 +2,15 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session, relationship
 
-from app.models.Device import Device
-from app.models.Hosts import ds_host_relation
+from app.models.Actuator import Actuator
+from app.models.Microcontroller import relation_between_microcontrollers_and_actuators
 from app.models.base import Base, db_session
 
 
-class DeviceSwitch(Device, Base):
-    __tablename__ = 'device_switch'
-    __swagger_doc_format__ = {**Device.__swagger_doc_format__}
-    hosts = relationship("Host", secondary=ds_host_relation,
-                         back_populates="device_switch")
+class ActuatorBinary(Actuator, Base):
+    __tablename__ = 'actuator_binary'
+    __swagger_doc_format__ = {**Actuator.__swagger_doc_format__}
+    microcontrollers = relationship("Microcontroller", secondary=relation_between_microcontrollers_and_actuators)
 
     def add(self, db: Session = db_session):
         try:
@@ -33,7 +32,7 @@ class DeviceSwitch(Device, Base):
         return db.query(cls).all()
 
     @classmethod
-    def find_by_id(cls, identifier, db: Session = db_session) -> DeviceSwitch:
+    def find_by_id(cls, identifier, db: Session = db_session) -> ActuatorBinary:
         return db.query(cls).filter(cls.identifier == identifier).first()
 
     @classmethod
@@ -45,6 +44,6 @@ class DeviceSwitch(Device, Base):
         db.commit()
 
     def seek_for_active_host(self, db: Session = db_session):
-        if self.hosts:
-            return self.hosts[0]
+        if self.microcontrollers:
+            return self.microcontrollers[0]
         return None

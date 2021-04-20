@@ -53,7 +53,7 @@ public:
         this->controllerIp = currentIp;
     }
 
-    bool deviceExists(string identifier) {
+    bool actuatorExists(string identifier) {
         for (std::list<Actuator *>::iterator it = this->listOfActuators.begin();
              it != this->listOfActuators.end(); ++it) {
             if ((*it)->identifier == identifier) {
@@ -104,7 +104,7 @@ enum Actions
 {
     ListActuators,
     GetActuator,
-    TriggerDevice
+    TriggerActuator
 };
 
 struct ActionIdentifier
@@ -161,7 +161,7 @@ public:
             return this->responseSuccessWith(this->toJson());
             break;
         case GetActuator:
-            if (this->deviceExists(actionIdentifier.identifier))
+            if (this->actuatorExists(actionIdentifier.identifier))
             {
                 return this->responseSuccessWith(this->toJson(actionIdentifier.identifier));
             }
@@ -170,8 +170,8 @@ public:
                 return this->responseNotFound();
             }
             break;
-        case TriggerDevice:
-            if (this->deviceExists(actionIdentifier.identifier))
+        case TriggerActuator:
+            if (this->actuatorExists(actionIdentifier.identifier))
             {
                 this->trigger(actionIdentifier.identifier);
                 return this->responseSuccessWith(this->toJson(actionIdentifier.identifier));
