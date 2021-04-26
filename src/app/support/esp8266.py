@@ -46,8 +46,8 @@ public:
 };
 
 //WebServer
-const char *ssid = "Marcolino";
-const char *password = "vmclvmclvmcl";
+const char *ssid = INSERT_HERE_YOUR_WIFI_SSID;
+const char *password = INSERT_HERE_YOUR_WIFI_PASSWORD;
 void webServer();
 
 WiFiServer server(80);
@@ -68,7 +68,7 @@ void setup()
   """
 
 SERVER = """
-  presentYouSelf("http://192.168.1.10:5000", genericBoard.toJson().c_str());
+  presentYouSelf(INSERT_HERE_YOUR_BACKEND_ADDRESS_AS_STRING, genericBoard.toJson().c_str());
   """
 
 STRING_4 = """
