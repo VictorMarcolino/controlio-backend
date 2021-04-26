@@ -4,9 +4,30 @@ from app.support.common.common import controller_base
 STRING_1 = """
 #include <ESP8266WiFi.h>
 #include <list>
-#include "./helpers/PinDefinition.h"
-#include "./helpers/helpers.h"
-
+#include <ESP8266HTTPClient.h>
+void presentYouSelf(String serverAdress, String jsonPayload){
+    // const String hostss = "http://192.168.1.10:5000";
+    while (true) {
+    HTTPClient http; //Declare object of class HTTPClient
+    http.setTimeout(500);
+    http.begin(serverAdress + "/api/reception");              //Specify request destination
+    http.addHeader("Content-Type", "application/json"); //Specify content-type header
+    int httpCode = http.POST(jsonPayload); //Send the request
+    String res_payload = http.getString();                //Get the response payload
+    http.end(); //Close connection
+    if (httpCode == 200)
+    {
+      digitalWrite(LED_BUILTIN, HIGH);
+      break;
+    }
+    for(int i=0; i<10; i++){
+      digitalWrite(LED_BUILTIN, LOW);
+      delay(150);
+      digitalWrite(LED_BUILTIN, HIGH);
+      delay(150);
+    }
+  }
+}
 using namespace std;
 class ActuatorForEsp8266 : public Actuator
 {
