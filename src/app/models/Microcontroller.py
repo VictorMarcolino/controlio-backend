@@ -30,6 +30,11 @@ class Microcontroller(CreatedAtMixin, UpdatedAtMixin, Base):
             if response.status_code == 200:
                 self.last_time_was_saw_online = datetime.utcnow()
                 self.is_online = True
+                ac = response.json().get("actuators")
+                for b in ac:
+                    for a in self.actuator_binary:
+                        if str(a.identifier) == b.get("identifier"):
+                            a.state = b.get("state")
                 db.commit()
                 return
         except Exception as e:
